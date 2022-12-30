@@ -4,6 +4,7 @@ import BigBilledIcon from '../assets/svg/big_billed.js'
 import { ROUTES_PATH } from '../constants/routes.js'
 import USERS_TEST from '../constants/usersTest.js'
 import Logout from "./Logout.js"
+import Bills from './Bills.js'
 
 export const filteredBills = (data, status) => {
   return (data && data.length) ?
@@ -72,9 +73,11 @@ export default class {
     this.document = document
     this.onNavigate = onNavigate
     this.store = store
+    //affiche les ticket au clique sur la flêche
     $('#arrow-icon1').click((e) => this.handleShowTickets(e, bills, 1))
     $('#arrow-icon2').click((e) => this.handleShowTickets(e, bills, 2))
     $('#arrow-icon3').click((e) => this.handleShowTickets(e, bills, 3))
+    
     new Logout({ localStorage, onNavigate })
   }
 
@@ -86,23 +89,38 @@ export default class {
   }
 
   handleEditTicket(e, bill, bills) {
+    console.log(e)
+    e.preventDefault();
+    //si le conter n'existe pas ou si l'id est différent du bill id on initialize le conteur à 0
     if (this.counter === undefined || this.id !== bill.id) this.counter = 0
+    //si l'id n'existe pas ou si l'id est différent du bill id on initialize l'id à la valeu bill.id
     if (this.id === undefined || this.id !== bill.id) this.id = bill.id
+    //si le conteur est paire
     if (this.counter % 2 === 0) {
+      console.log("if" + this.counter)
+      //pour tout les bills
       bills.forEach(b => {
+        //donne la couleur bleur
         $(`#open-bill${b.id}`).css({ background: '#0D5AE5' })
       })
+      //donne la couleur sombre
       $(`#open-bill${bill.id}`).css({ background: '#2A2B35' })
+      //affiche le ticket
       $('.dashboard-right-container div').html(DashboardFormUI(bill))
       $('.vertical-navbar').css({ height: '150vh' })
+      //rajoute 1 au conteur
       this.counter ++
-    } else {
+    }
+    //si le conteur est impaire
+    else {
+      console.log("else" + this.counter)
       $(`#open-bill${bill.id}`).css({ background: '#0D5AE5' })
-
+      // afffiche l'icone 
       $('.dashboard-right-container div').html(`
         <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
       `)
       $('.vertical-navbar').css({ height: '120vh' })
+      //rajoute 1 au conteur 
       this.counter ++
     }
     $('#icon-eye-d').click(this.handleClickIconEye)
@@ -131,12 +149,15 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
+    e.preventDefault();
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
       $(`#status-bills-container${this.index}`)
         .html(cards(filteredBills(bills, getStatus(this.index))))
+        console.log(getStatus(this.index ))
+        console.log(bills)
       this.counter ++
     } else {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
@@ -146,7 +167,9 @@ export default class {
     }
 
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      //correction
+      if (bill.status === getStatus(this.index)) { $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))}
+     
     })
 
     return bills
