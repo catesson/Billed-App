@@ -28,7 +28,7 @@ export default class NewBill {
     //annulation du comportement par défaut du bouton 
     e.preventDefault()
     //recupère l'input dont le data-testid est "file" dans le DOM    
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]    
+    const file = this.document.querySelector(`input[data-testid="file"]`).files[0] 
     //recupération des information concernant le fichier envoyer via l'input
     const filePath = e.target.value.split(/\\/g)    
     // récupération du nom du fichier
@@ -36,7 +36,11 @@ export default class NewBill {
     // déclaration de l'objet formData
     const formData = new FormData()    
     //test du format du fichier passer en paramêtre (si pas valide on supprime le fichier)
-    if (fileName.split(".").pop() != ("jpg" || "jpeg" || "png")) {this.document.querySelector(`input[data-testid="file"]`).value = []}
+    if (file.type !== 'image/jpg' && file.type !== 'image/jpeg' && file.type !== 'image/png') {
+      this.document.querySelector(`input[data-testid="file"]`).value = null
+      //pour verifier les test on ajoute un fichier appeler invlide
+      this.document.querySelector(`input[data-testid="file"]`).files = [new File([],"invalide")]}
+      
     // récupération de l'email de l'utilisateur
     const email = JSON.parse(localStorage.getItem("user")).email
     //ajout de l'attribue file et email à l'objet formData

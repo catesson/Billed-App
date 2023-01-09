@@ -2,6 +2,8 @@ import { ROUTES_PATH } from '../constants/routes.js'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
 
+
+
 export default class {
   //constructor de l'objet Bills
   constructor({ document, onNavigate, store, localStorage }) {
@@ -32,7 +34,9 @@ export default class {
     // raoute la classe show à la modal et renseigne la bonne image dans la modale
     const imgWidth = Math.floor($('#modaleFile').width() * 0.5)
     $('#modaleFile').find(".modal-body").html(`<div style='text-align: center;' class="bill-proof-container"><img width=${imgWidth} src=${billUrl} alt="Bill" /></div>`)
-    $('#modaleFile').modal('show')
+    if (typeof $("#modaleFile").modal === "function"){
+    $("#modaleFile").modal("show");
+};
   }
 
   getBills = () => {
